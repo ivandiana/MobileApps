@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,10 +18,14 @@ import com.example.dianaivan.booksapp.database.TableControllerBook;
  * Created by Diana Ivan on 11/5/2017.
  */
 
-public class OnLongClickListenerBook implements View.OnLongClickListener {
+public class OnLongClickListenerBook implements AdapterView.OnLongClickListener {
 
     Context context;
     String id;
+
+    //@Override
+   // public boolean onLongClick(AdapterView<?> parent,View view, int position, long id)
+
     @Override
     public boolean onLongClick(View view)
     {
@@ -53,6 +58,9 @@ public class OnLongClickListenerBook implements View.OnLongClickListener {
         return false;
     }
 
+
+
+
     public void editRecord(final int bookId)
     {
         //read a single record
@@ -67,12 +75,14 @@ public class OnLongClickListenerBook implements View.OnLongClickListener {
         final EditText editTextGenre=(EditText) formElementsView.findViewById(R.id.editTextGenre);
         final EditText editTextExchangeMethod=(EditText) formElementsView.findViewById(R.id.editTextExchangeMethod);
         final EditText editTextLocation=(EditText) formElementsView.findViewById(R.id.editTextLocation);
+        final EditText editTextImageURL=formElementsView.findViewById(R.id.editTextImageURL);
 
         editTextAuthor.setText(book.getAuthor());
         editTextTitle.setText(book.getTitle());
         editTextGenre.setText(book.getGenre());
         editTextExchangeMethod.setText(book.getExchangeMethod());
         editTextLocation.setText(book.getLocation());
+        editTextImageURL.setText((book.getImageURL()));
         new AlertDialog.Builder(context)
                 .setView(formElementsView)
                 .setTitle("Edit Record")
@@ -85,6 +95,7 @@ public class OnLongClickListenerBook implements View.OnLongClickListener {
                                 book.setGenre(editTextGenre.getText().toString());
                                 book.setExchangeMethod(editTextExchangeMethod.getText().toString());
                                 book.setLocation(editTextLocation.getText().toString());
+                                book.setImageURL(editTextImageURL.getText().toString());
 
                                 boolean updateSuccessful=tableControllerBook.update(book);
                                 if(updateSuccessful){

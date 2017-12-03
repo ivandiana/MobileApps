@@ -33,6 +33,7 @@ public class TableControllerBook extends DatabaseHandler {
         values.put("genre",book.getGenre());
         values.put("exchangeMethod",book.getExchangeMethod());
         values.put("location",book.getLocation());
+        values.put("imageURL",book.getImageURL());
 
         SQLiteDatabase db=this.getWritableDatabase();
 
@@ -68,8 +69,9 @@ public class TableControllerBook extends DatabaseHandler {
                 String genre=cursor.getString(cursor.getColumnIndex("genre"));
                 String exchangeMethod=cursor.getString(cursor.getColumnIndex("exchangeMethod"));
                 String location=cursor.getString(cursor.getColumnIndex("location"));
-
-                Book b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location);
+                String imageURL=cursor.getString(cursor.getColumnIndex("imageURL"));
+                String url="https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:";
+                Book b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,url);
                 recordList.add(b);
             }while(cursor.moveToNext());
 
@@ -92,8 +94,9 @@ public class TableControllerBook extends DatabaseHandler {
             String genre=cursor.getString(cursor.getColumnIndex("genre"));
             String exchangeMethod=cursor.getString(cursor.getColumnIndex("exchangeMethod"));
             String location=cursor.getString(cursor.getColumnIndex("location"));
+            String imageURL=cursor.getString(cursor.getColumnIndex("imageURL"));
 
-            b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location);
+            b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL);
         }
         cursor.close();
         db.close();
@@ -108,6 +111,7 @@ public class TableControllerBook extends DatabaseHandler {
         values.put("genre",book.getGenre());
         values.put("exchangeMethod",book.getExchangeMethod());
         values.put("location",book.getLocation());
+        values.put("imageURL",book.getImageURL());
         String where = "id = ?";
         String[] whereArgs = { Integer.toString(book.getId()) };
 

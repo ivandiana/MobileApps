@@ -35,6 +35,7 @@ public class OnClickListenerAddBook implements View.OnClickListener{
         final EditText editTextGenre=(EditText) formElementsView.findViewById(R.id.editTextGenre);
         final EditText editTextExchangeMethod=(EditText) formElementsView.findViewById(R.id.editTextExchangeMethod);
         final EditText editTextLocation=(EditText) formElementsView.findViewById(R.id.editTextLocation);
+        final EditText editTextImageURL=(EditText) formElementsView.findViewById(R.id.editTextImageURL);
 
         //create an alert dialog with the inflated book_input_form.xml
 
@@ -48,8 +49,9 @@ public class OnClickListenerAddBook implements View.OnClickListener{
                         String genre=editTextGenre.getText().toString();
                         String exchangeMethod=editTextExchangeMethod.getText().toString();
                         String location=editTextLocation.getText().toString();
+                        String imageURL=editTextImageURL.getText().toString();
 
-                        Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location);
+                        Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL);
 
                         boolean createSuccesful=new TableControllerBook(context).create(b);
                         if(createSuccesful)

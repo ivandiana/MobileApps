@@ -26,7 +26,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "author TEXT, "+
                 "genre TEXT, "+
                 "exchangeMethod TEXT, "+
-                "location TEXT ) ";
+                "location TEXT," +
+                "imageURL TEXT ) ";
 
         db.execSQL(sql);
     }
