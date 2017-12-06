@@ -9,21 +9,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dianaivan.booksapp.Adapters.BookAdapter;
 import com.example.dianaivan.booksapp.Listeners.OnClickListenerAddBook;
-import com.example.dianaivan.booksapp.Listeners.OnLongClickListenerBook;
 import com.example.dianaivan.booksapp.Models.Book;
 import com.example.dianaivan.booksapp.database.TableControllerBook;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ManageBooksActivity extends AppCompatActivity {
@@ -39,10 +35,6 @@ public class ManageBooksActivity extends AppCompatActivity {
 
         countRecords();
         readRecords();
-
-
-
-
     }
 
     //count all book records
@@ -69,27 +61,47 @@ public class ManageBooksActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,int position,long id)
             {
                 final Book selectedBook=bookList.get(position);
-                final CharSequence[] items={"Edit","Delete"};
+                final CharSequence[] items={"View","Edit","Delete"};
 
                 new AlertDialog.Builder(context).setTitle("Book Record")
                         .setItems(items, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int item) {
-                                if(item==0){
+                                if(item==0)
+                                {
+                                    Intent intent=new Intent(context,ViewBookActivity.class);
+                                    intent.putExtra("bookId",selectedBook.getId());
+                                    startActivity(intent);
+                                }
+                                else if(item==1){
                                     editRecord(selectedBook.getId(),context);
                                 }
-                                else if (item==1){
-                                    boolean deleteSuccessful=new TableControllerBook(context).delete(selectedBook.getId());
-                                    if(deleteSuccessful)
-                                    {
-                                        Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(context, "Unable to delete book record.", Toast.LENGTH_SHORT).show();
-                                    }
-                                    ((ManageBooksActivity)context).countRecords();
-                                    ((ManageBooksActivity)context).readRecords();
+                                else if (item==2){
+                                    new AlertDialog.Builder(context).setTitle("Delete").setMessage("Are you sure you want to permanently delete this record?")
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    boolean deleteSuccessful=new TableControllerBook(context).delete(selectedBook.getId());
+                                                    if(deleteSuccessful)
+                                                    {
+                                                        Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        Toast.makeText(context, "Unable to delete book record.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    ((ManageBooksActivity)context).countRecords();
+                                                    ((ManageBooksActivity)context).readRecords();
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    //pass;
+
+                                                }
+                                            }).show();
+
                                 }
                             }
                         }).show();

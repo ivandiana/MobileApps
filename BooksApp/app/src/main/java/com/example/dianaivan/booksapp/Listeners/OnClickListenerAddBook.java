@@ -51,7 +51,8 @@ public class OnClickListenerAddBook implements View.OnClickListener{
                         String location=editTextLocation.getText().toString();
                         String imageURL=editTextImageURL.getText().toString();
 
-                        Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL);
+
+                        Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,0);
 
                         boolean createSuccesful=new TableControllerBook(context).create(b);
                         if(createSuccesful)

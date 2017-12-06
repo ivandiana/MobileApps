@@ -12,18 +12,20 @@ public class Book {
     private String exchangeMethod;
     private String location;
     private String imageURL;
+    private double rating;
     public Book(){}
 
-    public Book(String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL){
+    public Book(String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL,double _rating){
      author=_author;
      title=_title;
      genre=_genre;
      exchangeMethod=_exchangeMethod;
      location=_location;
      imageURL=_imageURL;
+     rating=_rating;
     }
 
-    public Book(int _id,String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL){
+    public Book(int _id,String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL,double _rating){
         id=_id;
         author=_author;
         title=_title;
@@ -31,6 +33,7 @@ public class Book {
         exchangeMethod=_exchangeMethod;
         location=_location;
         imageURL=_imageURL;
+        rating=_rating;
     }
 
     public String getAuthor() {
@@ -86,6 +89,14 @@ public class Book {
     public void setImageURL(String URL)
     {
         this.imageURL=URL;
+    }
+    public double getRating(){
+        return rating;
+    }
+
+    public void setRating(double value)
+    {
+        rating=value;
     }
     public String toString()
     {

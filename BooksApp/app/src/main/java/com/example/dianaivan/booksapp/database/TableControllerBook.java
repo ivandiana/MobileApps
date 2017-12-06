@@ -34,6 +34,7 @@ public class TableControllerBook extends DatabaseHandler {
         values.put("exchangeMethod",book.getExchangeMethod());
         values.put("location",book.getLocation());
         values.put("imageURL",book.getImageURL());
+        values.put("rating",0);
 
         SQLiteDatabase db=this.getWritableDatabase();
 
@@ -70,8 +71,9 @@ public class TableControllerBook extends DatabaseHandler {
                 String exchangeMethod=cursor.getString(cursor.getColumnIndex("exchangeMethod"));
                 String location=cursor.getString(cursor.getColumnIndex("location"));
                 String imageURL=cursor.getString(cursor.getColumnIndex("imageURL"));
-                String url="https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:";
-                Book b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,url);
+                double rating=Double.parseDouble(cursor.getString(cursor.getColumnIndex("rating")));
+             //   String url="https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:";
+                Book b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,rating);
                 recordList.add(b);
             }while(cursor.moveToNext());
 
@@ -95,8 +97,9 @@ public class TableControllerBook extends DatabaseHandler {
             String exchangeMethod=cursor.getString(cursor.getColumnIndex("exchangeMethod"));
             String location=cursor.getString(cursor.getColumnIndex("location"));
             String imageURL=cursor.getString(cursor.getColumnIndex("imageURL"));
+            double rating=Double.parseDouble(cursor.getString(cursor.getColumnIndex("rating")));
 
-            b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL);
+            b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,rating);
         }
         cursor.close();
         db.close();
@@ -112,6 +115,7 @@ public class TableControllerBook extends DatabaseHandler {
         values.put("exchangeMethod",book.getExchangeMethod());
         values.put("location",book.getLocation());
         values.put("imageURL",book.getImageURL());
+        values.put("rating",book.getRating());
         String where = "id = ?";
         String[] whereArgs = { Integer.toString(book.getId()) };
 
