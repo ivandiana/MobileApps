@@ -3,7 +3,8 @@ import {
     StyleSheet,
     Text,
     View,
-    Button
+    Button,
+    AsyncStorage
 } from 'react-native';
 
 const styles= StyleSheet.create({
@@ -22,6 +23,11 @@ const styles= StyleSheet.create({
 })
 
 export default  class Home extends Component{
+    constructor(props) {
+        super(props);
+
+    }
+
     render(){
         const{navigate}=this.props.navigation;
         return (

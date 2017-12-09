@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
 
+import {ListView} from 'react-native';
+
 import {StackNavigator} from 'react-navigation'
 import Home from "./Home.js";
 import BookList from "./BookList.js";
 import Details from "./Details";
 import EmailPage from "./EmailPage.js"
+import AddBook from "./AddBook";
+import ViewBook from "./ViewBook"
 
 global.books=[
     {
@@ -40,12 +44,15 @@ global.books=[
         location:'Cluj-Napoca'
     },
 ]
+global.dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 
 const NavigationApp=StackNavigator({
     Home:{screen:Home},
     BookList:{screen:BookList},
     Details:{screen:Details},
+    AddBook:{screen:AddBook},
+    ViewBook:{screen:ViewBook},
     EmailPage:{screen:EmailPage}
 });
 
