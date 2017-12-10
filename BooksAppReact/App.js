@@ -17,7 +17,9 @@ global.books=[
         author:'George Owell',
         genre:'politics',
         exchangeMethod:'Borrow',
-        location:'Cluj-Napoca'
+        location:'Cluj-Napoca',
+        rating:'1',
+        votesNumber:'0'
     },
     {
         key:'2',
@@ -25,7 +27,9 @@ global.books=[
         author:'F. Scott Fitzgerald',
         genre:'fiction, history',
         exchangeMethod:'Sell 4$',
-        location:'Cluj-Napoca'
+        location:'Cluj-Napoca',
+        rating:'1',
+        votesNumber:'0'
     },
     {
         key:'3',
@@ -33,7 +37,9 @@ global.books=[
         author:'Margaret Mitchell',
         genre:'history, fiction',
         exchangeMethod:'Donation',
-        location:'Dej'
+        location:'Dej',
+        rating:'1',
+        votesNumber:'0'
     },
     {
         key:'4',
@@ -41,7 +47,9 @@ global.books=[
         author:'Charlotte Bronte',
         genre:'autobiography, romance',
         exchangeMethod:'Borrow',
-        location:'Cluj-Napoca'
+        location:'Cluj-Napoca',
+        rating:'1',
+        votesNumber:'0'
     },
 ]
 global.dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});

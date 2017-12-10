@@ -41,7 +41,9 @@ export default class Details extends Component{
             author:"",
             genre:"",
             exchangeMethod:"",
-            location:""
+            location:"",
+            rating:"",
+            votesNumber:""
         };
         if(this.props.navigation.state.params.book!==undefined)
         {
@@ -52,6 +54,8 @@ export default class Details extends Component{
             this.book.genre=param.genre;
             this.book.exchangeMethod=param.exchangeMethod;
             this.book.location=param.location;
+            this.book.rating=param.rating;
+            this.book.votesNumber=param.votesNumber;
         }
     }
 

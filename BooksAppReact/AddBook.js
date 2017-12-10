@@ -42,7 +42,9 @@ export default class AddBook extends Component{
             author:"",
             genre:"",
             exchangeMethod:"",
-            location:""
+            location:"",
+            rating:"1",
+            votesNumber:"0"
         };
     }
 
@@ -66,7 +68,9 @@ export default class AddBook extends Component{
             author:this.state.author,
             genre:this.state.genre,
             exchangeMethod:this.state.exchangeMethod,
-            location:this.state.location
+            location:this.state.location,
+            rating:this.state.rating,
+            votesNumber:this.state.votesNumber
         }));
         this.props.navigation.state.params.persistBooks();
         this.props.navigation.goBack();

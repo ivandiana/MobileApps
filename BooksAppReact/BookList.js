@@ -49,6 +49,8 @@ export default class BookList extends Component{
             genre:"",
             exchangeMethod:"",
             location:"",
+            rating:"",
+            votesNumber:"",
             dataSource:global.dataSource.cloneWithRows([]),
             allbooks:[],
         };
@@ -59,7 +61,9 @@ export default class BookList extends Component{
         author:"",
         genre:"",
         exchangeMethod:"",
-        location:""
+        location:"",
+            rating:"",
+            votesNumber:""
         };
         this.persistBooks();
     }
@@ -111,10 +115,8 @@ export default class BookList extends Component{
                 <PopupDialog ref={(popupDialog) => {
                     this.popupDialogMenu = popupDialog;
                 }} >
-
                     <View>
-
-                        <Button title="View" onPress={() => {this.popupDialogMenu.dismiss();navigate('ViewBook',{book:this.selectedItem})}}/>
+                        <Button title="View" onPress={() => {this.popupDialogMenu.dismiss();navigate('ViewBook',{book:this.selectedItem,persistBooks:this.persistBooks.bind(this)})}}/>
                         <Button title="Edit" onPress={() => {this.popupDialogMenu.dismiss();navigate('Details',{book:this.selectedItem,persistBooks:this.persistBooks.bind(this)})}}/>
                         <Button title="Delete" onPress={() => {this.popupDialogMenu.dismiss();this.DeleteSelectedBook();}}/>
                     </View>
