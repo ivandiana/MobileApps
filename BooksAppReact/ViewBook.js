@@ -89,8 +89,8 @@ export default class ViewBook extends Component{
             [3, 7],
             [4, 9],
         ];
-        let r = parseInt(this.state.rating) * 100 / 5;
-        let rr = (5 - parseInt(this.state.rating)) * 100 / 5;
+        //let r = parseInt(this.state.rating) * 100 / 5;
+        //let rr = (5 - parseInt(this.state.rating)) * 100 / 5;
         return (
             <View style={styles.container}>
                 <ScrollView>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "984712483869",
+    "firebase_url": "https://booksapp-80e75.firebaseio.com",
+    "project_id": "booksapp-80e75",
+    "storage_bucket": "booksapp-80e75.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984712483869:android:72234ab20699303c",
+        "android_client_info": {
+          "package_name": "com.example.dianaivan.booksapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984712483869-nq6qgqhjf8uvqjdc6rpkd0ioumsfh1bp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dianaivan.booksapp",
+            "certificate_hash": "eff798f5d645af4b63b1cda1e203d25ff0cb89a1"
+          }
+        },
+        {
+          "client_id": "984712483869-jqjg0dprolbj3dsq6b4ibu2cppaqlo4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiSaqWFxNvQyNAPGKGsWx9tIdN6w7gYsw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984712483869-jqjg0dprolbj3dsq6b4ibu2cppaqlo4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

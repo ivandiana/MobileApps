@@ -3,16 +3,27 @@ package com.example.dianaivan.booksapp.Listeners;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.dianaivan.booksapp.MainActivity;
 import com.example.dianaivan.booksapp.ManageBooksActivity;
 import com.example.dianaivan.booksapp.Models.Book;
 import com.example.dianaivan.booksapp.R;
-import com.example.dianaivan.booksapp.database.TableControllerBook;
+import com.example.dianaivan.booksapp.Services.RemoteBookServiceImpl;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Diana Ivan on 11/5/2017.
@@ -20,6 +31,12 @@ import com.example.dianaivan.booksapp.database.TableControllerBook;
 
 public class OnClickListenerAddBook implements View.OnClickListener{
 
+    private RemoteBookServiceImpl.RemoteBookServiceInterface remoteService;
+
+    public OnClickListenerAddBook(RemoteBookServiceImpl.RemoteBookServiceInterface service )
+    {
+        remoteService=service;
+    }
     @Override
     public void onClick(View view)
     {
@@ -37,7 +54,7 @@ public class OnClickListenerAddBook implements View.OnClickListener{
         final EditText editTextLocation=(EditText) formElementsView.findViewById(R.id.editTextLocation);
         final EditText editTextImageURL=(EditText) formElementsView.findViewById(R.id.editTextImageURL);
 
-        //create an alert dialog with the inflated book_input_form.xml
+        //create an alert dialog with the inflated book_input_form.x
 
         new AlertDialog.Builder(context).setView(formElementsView)
                 .setTitle("Add New Book")
@@ -52,9 +69,9 @@ public class OnClickListenerAddBook implements View.OnClickListener{
                         String imageURL=editTextImageURL.getText().toString();
 
 
-                        Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,0);
+                        final Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,0,0);
 
-                        boolean createSuccesful=new TableControllerBook(context).create(b);
+                       /* boolean createSuccesful=new TableControllerBook(context).create(b);
                         if(createSuccesful)
                         {
                             Toast.makeText(context,"Book info was saved",Toast.LENGTH_SHORT).show();
@@ -64,11 +81,36 @@ public class OnClickListenerAddBook implements View.OnClickListener{
                             Toast.makeText(context,"Unable to save book information",Toast.LENGTH_SHORT).show();
                         }
                         ((ManageBooksActivity)context).countRecords();
-                        ((ManageBooksActivity)context).readRecords();
+                        ((ManageBooksActivity)context).readRecords();*/
+
+                        addNewBook(b,context);
+                        //((ManageBooksActivity)context).readRecords();
                         dialog.cancel();
                     }
                         }).show();
 
-        ((ManageBooksActivity)context).readRecords();
+
+    }
+
+    private void addNewBook(final Book b,final Context context)
+    {
+        Call<Book> call=remoteService.createBook(b.getTitle(),b);
+        call.enqueue(new Callback<Book>() {
+            @Override
+            public void onResponse(Call<Book> call, Response<Book> response) {
+                Toast.makeText(context,"Book info was saved",Toast.LENGTH_SHORT).show();
+                Log.d("AddBook", "Book added: " + b.getTitle());
+                ((ManageBooksActivity)context).readRecords();
+                ((ManageBooksActivity)context).countRecords();
+            }
+
+            @Override
+            public void onFailure(Call<Book> call, Throwable t) {
+                Toast.makeText(context,"Unable to save book information",Toast.LENGTH_SHORT).show();
+                Log.d("AddBook", "Failed to add book: " + b.getTitle());
+            }
+        });
+
+
     }
 }

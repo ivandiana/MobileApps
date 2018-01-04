@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,40 +19,79 @@ import android.widget.Toast;
 import com.example.dianaivan.booksapp.Adapters.BookAdapter;
 import com.example.dianaivan.booksapp.Listeners.OnClickListenerAddBook;
 import com.example.dianaivan.booksapp.Models.Book;
-import com.example.dianaivan.booksapp.database.TableControllerBook;
+import com.example.dianaivan.booksapp.Services.RemoteBookServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ManageBooksActivity extends AppCompatActivity {
 
+    private RemoteBookServiceImpl.RemoteBookServiceInterface remoteService= RemoteBookServiceImpl.getInstance();
     private ListView myListView;
+    final List<Book> bookList=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_books);
 
         Button buttonAddBook=findViewById(R.id.buttonAddBook);
-        buttonAddBook.setOnClickListener(new OnClickListenerAddBook());
+        buttonAddBook.setOnClickListener(new OnClickListenerAddBook(remoteService));
 
-        countRecords();
+
         readRecords();
+        countRecords();
     }
 
     //count all book records
     public void countRecords(){
-        int recordCount=new TableControllerBook(this).count();
+        int recordCount=bookList.size();
         TextView textViewRecordCount=(TextView) findViewById(R.id.textViewRecordCount);
         textViewRecordCount.setText(recordCount + " records found.");
     }
 
 
     //read all records
-    public void readRecords()
+    public void readRecords() {
+
+        myListView = findViewById(R.id.books_list_view);
+
+        //  final List<Book> bookList=new TableControllerBook(this).read();
+        Call<Map<String, Book>> call = remoteService.getAllBooks();
+        call.enqueue(new Callback<Map<String, Book>>() {
+            @Override
+            public void onResponse(Call<Map<String, Book>> call, Response<Map<String, Book>> response) {
+                final Map<String, Book> books = response.body();
+                if (books != null && !books.isEmpty()) {
+
+                    loadData(books);
+                    countRecords();
+                    Log.d("MainActivity", "Read data of size: " + books.size());
+                } else {
+                    Log.d("MainActivity", "Data is empty. ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Book>> call, Throwable t) {
+                Log.d("MainActivity", "Failed to read data.");
+            }
+        });
+    }
+    public void loadData(Map<String,Book> books)
     {
-
-        myListView= findViewById(R.id.books_list_view);
-
-        final List<Book> bookList=new TableControllerBook(this).read();
+        //bookList=new ArrayList<>();
+        bookList.clear();
+        for(Map.Entry<String,Book> entry:books.entrySet())
+        {
+            if(entry.getValue().getImageURL().isEmpty())
+                entry.getValue().setImageURL("https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:");
+            bookList.add(entry.getValue());
+        }
         BookAdapter adapter=new BookAdapter(this,bookList);
         myListView.setAdapter(adapter);
 
@@ -70,28 +110,31 @@ public class ManageBooksActivity extends AppCompatActivity {
                                 if(item==0)
                                 {
                                     Intent intent=new Intent(context,ViewBookActivity.class);
-                                    intent.putExtra("bookId",selectedBook.getId());
+                                    intent.putExtra("bookTitle",selectedBook.getTitle());
+
                                     startActivity(intent);
+
                                 }
                                 else if(item==1){
-                                    editRecord(selectedBook.getId(),context);
+                                    getRecord(selectedBook.getTitle(),context);
                                 }
                                 else if (item==2){
                                     new AlertDialog.Builder(context).setTitle("Delete").setMessage("Are you sure you want to permanently delete this record?")
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    boolean deleteSuccessful=new TableControllerBook(context).delete(selectedBook.getId());
-                                                    if(deleteSuccessful)
+                                                    deleteBook(selectedBook.getTitle(),context);
+                                                    /* boolean deleteSuccessful=new TableControllerBook(context).delete(selectedBook.getId());
+                                                   f(deleteSuccessful)
                                                     {
                                                         Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
                                                     }
                                                     else
                                                     {
                                                         Toast.makeText(context, "Unable to delete book record.", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    ((ManageBooksActivity)context).countRecords();
-                                                    ((ManageBooksActivity)context).readRecords();
+                                                    }*/
+                                                    //((ManageBooksActivity)context).countRecords();
+                                                    //((ManageBooksActivity)context).readRecords();
                                                 }
                                             })
                                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -101,7 +144,7 @@ public class ManageBooksActivity extends AppCompatActivity {
 
                                                 }
                                             }).show();
-
+                                    countRecords();
                                 }
                             }
                         }).show();
@@ -111,11 +154,11 @@ public class ManageBooksActivity extends AppCompatActivity {
 
     }
 
-    public void editRecord(final int bookId,final Context context)
+    public void editRecord(final Book book,final Context context)
     {
         //read a single record
-        final TableControllerBook tableControllerBook=new TableControllerBook(context);
-        final Book book=tableControllerBook.readSingleRecord(bookId);
+        //final TableControllerBook tableControllerBook=new TableControllerBook(context);
+       // final Book book;//=tableControllerBook.readSingleRecord(bookId);
         //inflate book_input_form for editing this time
         LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View formElementsView=inflater.inflate(R.layout.book_input_form,null,false);
@@ -147,19 +190,87 @@ public class ManageBooksActivity extends AppCompatActivity {
                                 book.setLocation(editTextLocation.getText().toString());
                                 book.setImageURL(editTextImageURL.getText().toString());
 
-                                boolean updateSuccessful=tableControllerBook.update(book);
-                                if(updateSuccessful){
+                                //boolean updateSuccessful=tableControllerBook.update(book);
+
+                               /* if(updateSuccessful){
                                     Toast.makeText(context, "Book record was updated.", Toast.LENGTH_SHORT).show();
                                 }else{
                                     Toast.makeText(context, "Unable to update book record.", Toast.LENGTH_SHORT).show();
-                                }
-                                ((ManageBooksActivity)context).countRecords();
-                                ((ManageBooksActivity)context).readRecords();
+                                }*/
+
+                                updateBook(book,context);
+                               // ((ManageBooksActivity)context).countRecords();
+                               // ((ManageBooksActivity)context).readRecords();
+                                dialog.cancel();
 
                             }
                         }).show();
+    }
 
+    private void getRecord(final String title,final Context context)
+    {
+        Call<Book> call=remoteService.getBook(title);
+        call.enqueue(new Callback<Book>() {
+            @Override
+            public void onResponse(Call<Book> call, Response<Book> response) {
+                final Book book=response.body();
+                if(book!=null)
+                {
+                    editRecord(book,context);
+                    Log.d("MainActivity", "Read book: "+book.getTitle());
+                }
+                else
+                {
+                    Log.d("MainActivity", "No book with title: "+title);
+                }
+            }
 
+            @Override
+            public void onFailure(Call<Book> call, Throwable t) {
+                Log.d("MainActivity", "Failed finding book: "+title);
+            }
+        });
+    }
 
+    private void updateBook(final Book book,final Context context)
+    {
+        Call<Book> call=remoteService.createBook(book.getTitle(),book);
+        call.enqueue(new Callback<Book>() {
+            @Override
+            public void onResponse(Call<Book> call, Response<Book> response) {
+
+                Toast.makeText(context, "Book record was updated.", Toast.LENGTH_SHORT).show();
+                Log.d("MainActivity", "Updated book: "+book.getTitle());
+                ((ManageBooksActivity)context).readRecords();
+                countRecords();
+
+            }
+
+            @Override
+            public void onFailure(Call<Book> call, Throwable t) {
+                Log.d("MainActivity", "Update failed for "+book.getTitle());
+                Toast.makeText(context, "Unable to update book.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deleteBook(final String title,final Context context)
+    {
+        Call<Book> call=remoteService.deleteBook(title);
+        call.enqueue(new Callback<Book>() {
+            @Override
+            public void onResponse(Call<Book> call, Response<Book> response) {
+                Log.d("MainActivity", "Deleted book: "+title);
+                Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
+                ((ManageBooksActivity)context).readRecords();
+                countRecords();
+            }
+
+            @Override
+            public void onFailure(Call<Book> call, Throwable t) {
+                Log.d("MainActivity", "Failed to delete book: "+title);
+                Toast.makeText(context, "Unable to delete book.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -35,6 +35,7 @@ public class TableControllerBook extends DatabaseHandler {
         values.put("location",book.getLocation());
         values.put("imageURL",book.getImageURL());
         values.put("rating",0);
+        values.put("ratingsNo",0);
 
         SQLiteDatabase db=this.getWritableDatabase();
 
@@ -64,7 +65,7 @@ public class TableControllerBook extends DatabaseHandler {
         if(cursor.moveToFirst())
         {
             do{
-                int id=Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
+                String id=cursor.getString(cursor.getColumnIndex("id"));
                 String bookTitle=cursor.getString(cursor.getColumnIndex("title"));
                 String bookAuthor=cursor.getString(cursor.getColumnIndex("author"));
                 String genre=cursor.getString(cursor.getColumnIndex("genre"));
@@ -72,8 +73,10 @@ public class TableControllerBook extends DatabaseHandler {
                 String location=cursor.getString(cursor.getColumnIndex("location"));
                 String imageURL=cursor.getString(cursor.getColumnIndex("imageURL"));
                 double rating=Double.parseDouble(cursor.getString(cursor.getColumnIndex("rating")));
-             //   String url="https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:";
-                Book b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,rating);
+                double ratingsNo=Double.parseDouble(cursor.getString(cursor.getColumnIndex("ratingsNo")));
+                if(imageURL.isEmpty())
+                   imageURL="https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:";
+                Book b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,rating,ratingsNo);
                 recordList.add(b);
             }while(cursor.moveToNext());
 
@@ -90,7 +93,7 @@ public class TableControllerBook extends DatabaseHandler {
         SQLiteDatabase db=this.getWritableDatabase();
         Cursor cursor=db.rawQuery(sql, null);
         if(cursor.moveToFirst()){
-            int id=Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
+            String id=cursor.getString(cursor.getColumnIndex("id"));
             String bookTitle=cursor.getString(cursor.getColumnIndex("title"));
             String bookAuthor=cursor.getString(cursor.getColumnIndex("author"));
             String genre=cursor.getString(cursor.getColumnIndex("genre"));
@@ -98,8 +101,10 @@ public class TableControllerBook extends DatabaseHandler {
             String location=cursor.getString(cursor.getColumnIndex("location"));
             String imageURL=cursor.getString(cursor.getColumnIndex("imageURL"));
             double rating=Double.parseDouble(cursor.getString(cursor.getColumnIndex("rating")));
-
-            b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,rating);
+            double ratingsNo=Double.parseDouble(cursor.getString(cursor.getColumnIndex("ratingsNo")));
+            if(imageURL.isEmpty())
+                imageURL="https://www.google.ro/search?q=book&source=lnms&tbm=isch&sa=X&ved=0ahUKEwiUg4zo2u7XAhWEWRQKHTWjCrMQ_AUICigB&biw=1229&bih=568#imgrc=-5-48n6dvPGAAM:";
+            b=new Book(id,bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,rating,ratingsNo);
         }
         cursor.close();
         db.close();
@@ -116,8 +121,9 @@ public class TableControllerBook extends DatabaseHandler {
         values.put("location",book.getLocation());
         values.put("imageURL",book.getImageURL());
         values.put("rating",book.getRating());
+        values.put("ratingsNo",book.getRatingsNo());
         String where = "id = ?";
-        String[] whereArgs = { Integer.toString(book.getId()) };
+        String[] whereArgs = { book.getId() };
 
         SQLiteDatabase db=this.getWritableDatabase();
 

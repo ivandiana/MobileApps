@@ -28,24 +28,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "exchangeMethod TEXT, "+
                 "location TEXT," +
                 "imageURL TEXT ," +
-                "rating REAL) ";
+                "rating REAL,"+
+                "ratingsNo REAL) ";
 
-        String sqlRating="CREATE TABLE ratings (id INTEGER PRIMARY KEY,"+
-                "bookId INTEGER,"+
-                "rating INTEGER, "+
-                " FOREIGN KEY (bookId) REFERENCES books (id));";
 
         db.execSQL(sql);
-        db.execSQL(sqlRating);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         String sql="DROP TABLE IF EXISTS books";
-        String sqlRatings="DROP TABLE IF EXISTS ratings";
         db.execSQL(sql);
-        db.execSQL(sqlRatings);
         onCreate(db);
     }
 }

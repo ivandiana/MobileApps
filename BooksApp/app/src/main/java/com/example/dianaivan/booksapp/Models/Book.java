@@ -1,11 +1,18 @@
 package com.example.dianaivan.booksapp.Models;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Created by Diana Ivan on 11/5/2017.
  */
 
+@IgnoreExtraProperties
 public class Book {
-    private int id;
+    private String id;
     private String title;
     private String author;
     private String genre;
@@ -13,9 +20,10 @@ public class Book {
     private String location;
     private String imageURL;
     private double rating;
+    private double ratingsNo;
     public Book(){}
 
-    public Book(String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL,double _rating){
+    public Book(String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL,double _rating,double _ratingsNo){
      author=_author;
      title=_title;
      genre=_genre;
@@ -23,9 +31,10 @@ public class Book {
      location=_location;
      imageURL=_imageURL;
      rating=_rating;
+     ratingsNo=_ratingsNo;
     }
 
-    public Book(int _id,String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL,double _rating){
+    public Book(String _id,String _title,String _author, String _genre,String _exchangeMethod,String _location,String _imageURL,double _rating,double _ratingsNo){
         id=_id;
         author=_author;
         title=_title;
@@ -34,6 +43,7 @@ public class Book {
         location=_location;
         imageURL=_imageURL;
         rating=_rating;
+        ratingsNo=_ratingsNo;
     }
 
     public String getAuthor() {
@@ -44,11 +54,11 @@ public class Book {
         this.author = author;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -98,10 +108,34 @@ public class Book {
     {
         rating=value;
     }
+    public double getRatingsNo(){
+        return ratingsNo;
+    }
+
+    public void setRatingsNo(double value)
+    {
+        ratingsNo=value;
+    }
     public String toString()
     {
         return "\nTitle: "+title+"\nAuthor: "+author
                 +"\nGenre: "+genre+"\nExchange method: "+exchangeMethod
                 +"\nLocation: "+location;
+    }
+
+    @Exclude
+    public Map<String,Object> toMap()
+    {
+        HashMap<String,Object> res=new HashMap<>();
+        res.put("id",id);
+        res.put("title",title);
+        res.put("author",author);
+        res.put("genre",genre);
+        res.put("exchangeMethod",exchangeMethod);
+        res.put("location",location);
+        res.put("imageURL",imageURL);
+        res.put("rating",rating);
+        res.put("ratingsNo",ratingsNo);
+        return res;
     }
 }
