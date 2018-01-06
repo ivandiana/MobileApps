@@ -18,14 +18,15 @@
         </activity>
         <activity
             android:name=".ManageBooksActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".HomeActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".HomeActivity" />
         </activity>
-        <activity android:name=".ViewBookActivity"></activity>
+        <activity android:name=".ViewBookActivity" />
+        <activity android:name=".HomeActivity"></activity>
     </application>
 
 </manifest>

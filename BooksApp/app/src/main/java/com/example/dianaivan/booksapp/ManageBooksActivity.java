@@ -20,6 +20,8 @@ import com.example.dianaivan.booksapp.Adapters.BookAdapter;
 import com.example.dianaivan.booksapp.Listeners.OnClickListenerAddBook;
 import com.example.dianaivan.booksapp.Models.Book;
 import com.example.dianaivan.booksapp.Services.RemoteBookServiceImpl;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,9 @@ public class ManageBooksActivity extends AppCompatActivity {
     private RemoteBookServiceImpl.RemoteBookServiceInterface remoteService= RemoteBookServiceImpl.getInstance();
     private ListView myListView;
     final List<Book> bookList=new ArrayList<>();
+
+    private static final String TAG="ManageBActivity";
+    private boolean isAdmin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +47,18 @@ public class ManageBooksActivity extends AppCompatActivity {
         Button buttonAddBook=findViewById(R.id.buttonAddBook);
         buttonAddBook.setOnClickListener(new OnClickListenerAddBook(remoteService));
 
+        isAdmin=getIntent().getBooleanExtra("isAdmin",false);
+        if(!isAdmin)
+        {
+            //TODO hide the add button
+            buttonAddBook.setVisibility(View.INVISIBLE);
+        }
+
+        //for observer pattern:
+       // RemoteBookServiceImpl.attach(this);
+        FirebaseAuth mAuth=FirebaseAuth.getInstance();
+        FirebaseUser currentUser=mAuth.getCurrentUser();
+        Log.d(TAG,"Logged user:"+currentUser.getEmail()+ " is admin: "+isAdmin);
 
         readRecords();
         countRecords();
@@ -70,15 +87,15 @@ public class ManageBooksActivity extends AppCompatActivity {
 
                     loadData(books);
                     countRecords();
-                    Log.d("MainActivity", "Read data of size: " + books.size());
+                    Log.d("HomeActivity", "Read data of size: " + books.size());
                 } else {
-                    Log.d("MainActivity", "Data is empty. ");
+                    Log.d("HomeActivity", "Data is empty. ");
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Book>> call, Throwable t) {
-                Log.d("MainActivity", "Failed to read data.");
+                Log.d("HomeActivity", "Failed to read data.");
             }
         });
     }
@@ -116,14 +133,19 @@ public class ManageBooksActivity extends AppCompatActivity {
 
                                 }
                                 else if(item==1){
-                                    getRecord(selectedBook.getTitle(),context);
+                                    if(isAdmin)
+                                        getRecord(selectedBook.getTitle(),context);
+                                    else
+                                        Toast.makeText(context,"You need admin account in order to perform this operation.",Toast.LENGTH_SHORT).show();
                                 }
                                 else if (item==2){
-                                    new AlertDialog.Builder(context).setTitle("Delete").setMessage("Are you sure you want to permanently delete this record?")
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    deleteBook(selectedBook.getTitle(),context);
+                                    if(isAdmin)
+                                    {
+                                        new AlertDialog.Builder(context).setTitle("Delete").setMessage("Are you sure you want to permanently delete this record?")
+                                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        deleteBook(selectedBook.getTitle(),context);
                                                     /* boolean deleteSuccessful=new TableControllerBook(context).delete(selectedBook.getId());
                                                    f(deleteSuccessful)
                                                     {
@@ -133,18 +155,24 @@ public class ManageBooksActivity extends AppCompatActivity {
                                                     {
                                                         Toast.makeText(context, "Unable to delete book record.", Toast.LENGTH_SHORT).show();
                                                     }*/
-                                                    //((ManageBooksActivity)context).countRecords();
-                                                    //((ManageBooksActivity)context).readRecords();
-                                                }
-                                            })
-                                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    //pass;
+                                                        //((ManageBooksActivity)context).countRecords();
+                                                        //((ManageBooksActivity)context).readRecords();
+                                                    }
+                                                })
+                                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        //pass;
 
-                                                }
-                                            }).show();
-                                    countRecords();
+                                                    }
+                                                }).show();
+                                        countRecords();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(context,"You need admin account in order to perform this operation.",Toast.LENGTH_SHORT).show();
+                                    }
+
                                 }
                             }
                         }).show();
@@ -217,17 +245,17 @@ public class ManageBooksActivity extends AppCompatActivity {
                 if(book!=null)
                 {
                     editRecord(book,context);
-                    Log.d("MainActivity", "Read book: "+book.getTitle());
+                    Log.d("HomeActivity", "Read book: "+book.getTitle());
                 }
                 else
                 {
-                    Log.d("MainActivity", "No book with title: "+title);
+                    Log.d("HomeActivity", "No book with title: "+title);
                 }
             }
 
             @Override
             public void onFailure(Call<Book> call, Throwable t) {
-                Log.d("MainActivity", "Failed finding book: "+title);
+                Log.d("HomeActivity", "Failed finding book: "+title);
             }
         });
     }
@@ -240,7 +268,7 @@ public class ManageBooksActivity extends AppCompatActivity {
             public void onResponse(Call<Book> call, Response<Book> response) {
 
                 Toast.makeText(context, "Book record was updated.", Toast.LENGTH_SHORT).show();
-                Log.d("MainActivity", "Updated book: "+book.getTitle());
+                Log.d("HomeActivity", "Updated book: "+book.getTitle());
                 ((ManageBooksActivity)context).readRecords();
                 countRecords();
 
@@ -248,7 +276,7 @@ public class ManageBooksActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Book> call, Throwable t) {
-                Log.d("MainActivity", "Update failed for "+book.getTitle());
+                Log.d("HomeActivity", "Update failed for "+book.getTitle());
                 Toast.makeText(context, "Unable to update book.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -260,7 +288,7 @@ public class ManageBooksActivity extends AppCompatActivity {
         call.enqueue(new Callback<Book>() {
             @Override
             public void onResponse(Call<Book> call, Response<Book> response) {
-                Log.d("MainActivity", "Deleted book: "+title);
+                Log.d("HomeActivity", "Deleted book: "+title);
                 Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
                 ((ManageBooksActivity)context).readRecords();
                 countRecords();
@@ -268,7 +296,7 @@ public class ManageBooksActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Book> call, Throwable t) {
-                Log.d("MainActivity", "Failed to delete book: "+title);
+                Log.d("HomeActivity", "Failed to delete book: "+title);
                 Toast.makeText(context, "Unable to delete book.", Toast.LENGTH_SHORT).show();
             }
         });

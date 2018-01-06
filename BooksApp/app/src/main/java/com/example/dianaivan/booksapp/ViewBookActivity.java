@@ -74,7 +74,7 @@ public class ViewBookActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Book> call, Throwable t) {
-                Log.d("MainActivity", "Failed getting book: "+bookTitle);
+                Log.d("HomeActivity", "Failed getting book: "+bookTitle);
             }
         });
     }
@@ -184,17 +184,17 @@ public class ViewBookActivity extends AppCompatActivity {
                     book.setRating(book.getRating()+rateValue);
                     book.setRatingsNo(book.getRatingsNo()+1);
                     updateBook(book);
-                    Log.d("MainActivity", "Updated book rating: "+book.getTitle());
+                    Log.d("HomeActivity", "Updated book rating: "+book.getTitle());
                 }
                 else
                 {
-                    Log.d("MainActivity", "No book with title: "+bookTitle);
+                    Log.d("HomeActivity", "No book with title: "+bookTitle);
                 }
             }
 
             @Override
             public void onFailure(Call<Book> call, Throwable t) {
-                Log.d("MainActivity", "Failed getting book: "+bookTitle);
+                Log.d("HomeActivity", "Failed getting book: "+bookTitle);
             }
         });
     }
@@ -205,13 +205,13 @@ public class ViewBookActivity extends AppCompatActivity {
         call.enqueue(new Callback<Book>() {
             @Override
             public void onResponse(Call<Book> call, Response<Book> response) {
-                Log.d("MainActivity", "Updated book: "+book.getTitle());
+                Log.d("HomeActivity", "Updated book: "+book.getTitle());
                 populateChart();
             }
 
             @Override
             public void onFailure(Call<Book> call, Throwable t) {
-                Log.d("MainActivity", "Update failed for "+book.getTitle());
+                Log.d("HomeActivity", "Update failed for "+book.getTitle());
             }
         });
     }
