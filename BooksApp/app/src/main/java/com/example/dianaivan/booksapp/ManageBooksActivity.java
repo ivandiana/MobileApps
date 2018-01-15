@@ -1,9 +1,11 @@
 package com.example.dianaivan.booksapp;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import com.example.dianaivan.booksapp.Adapters.BookAdapter;
 import com.example.dianaivan.booksapp.Listeners.OnClickListenerAddBook;
 import com.example.dianaivan.booksapp.Models.Book;
+import com.example.dianaivan.booksapp.Observer.Observer;
 import com.example.dianaivan.booksapp.Services.RemoteBookServiceImpl;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,7 +34,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ManageBooksActivity extends AppCompatActivity {
+public class ManageBooksActivity extends AppCompatActivity implements Observer{
 
     private RemoteBookServiceImpl.RemoteBookServiceInterface remoteService= RemoteBookServiceImpl.getInstance();
     private ListView myListView;
@@ -50,12 +53,11 @@ public class ManageBooksActivity extends AppCompatActivity {
         isAdmin=getIntent().getBooleanExtra("isAdmin",false);
         if(!isAdmin)
         {
-            //TODO hide the add button
             buttonAddBook.setVisibility(View.INVISIBLE);
         }
 
-        //for observer pattern:
-       // RemoteBookServiceImpl.attach(this);
+        //attach observer
+        RemoteBookServiceImpl.attach(this);
         FirebaseAuth mAuth=FirebaseAuth.getInstance();
         FirebaseUser currentUser=mAuth.getCurrentUser();
         Log.d(TAG,"Logged user:"+currentUser.getEmail()+ " is admin: "+isAdmin);
@@ -146,17 +148,6 @@ public class ManageBooksActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         deleteBook(selectedBook.getTitle(),context);
-                                                    /* boolean deleteSuccessful=new TableControllerBook(context).delete(selectedBook.getId());
-                                                   f(deleteSuccessful)
-                                                    {
-                                                        Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    else
-                                                    {
-                                                        Toast.makeText(context, "Unable to delete book record.", Toast.LENGTH_SHORT).show();
-                                                    }*/
-                                                        //((ManageBooksActivity)context).countRecords();
-                                                        //((ManageBooksActivity)context).readRecords();
                                                     }
                                                 })
                                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -185,8 +176,6 @@ public class ManageBooksActivity extends AppCompatActivity {
     public void editRecord(final Book book,final Context context)
     {
         //read a single record
-        //final TableControllerBook tableControllerBook=new TableControllerBook(context);
-       // final Book book;//=tableControllerBook.readSingleRecord(bookId);
         //inflate book_input_form for editing this time
         LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View formElementsView=inflater.inflate(R.layout.book_input_form,null,false);
@@ -218,17 +207,8 @@ public class ManageBooksActivity extends AppCompatActivity {
                                 book.setLocation(editTextLocation.getText().toString());
                                 book.setImageURL(editTextImageURL.getText().toString());
 
-                                //boolean updateSuccessful=tableControllerBook.update(book);
-
-                               /* if(updateSuccessful){
-                                    Toast.makeText(context, "Book record was updated.", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Toast.makeText(context, "Unable to update book record.", Toast.LENGTH_SHORT).show();
-                                }*/
-
                                 updateBook(book,context);
-                               // ((ManageBooksActivity)context).countRecords();
-                               // ((ManageBooksActivity)context).readRecords();
+
                                 dialog.cancel();
 
                             }
@@ -245,11 +225,11 @@ public class ManageBooksActivity extends AppCompatActivity {
                 if(book!=null)
                 {
                     editRecord(book,context);
-                    Log.d("HomeActivity", "Read book: "+book.getTitle());
+                    Log.d(TAG, "Read book: "+book.getTitle());
                 }
                 else
                 {
-                    Log.d("HomeActivity", "No book with title: "+title);
+                    Log.d(TAG, "No book with title: "+title);
                 }
             }
 
@@ -269,6 +249,7 @@ public class ManageBooksActivity extends AppCompatActivity {
 
                 Toast.makeText(context, "Book record was updated.", Toast.LENGTH_SHORT).show();
                 Log.d("HomeActivity", "Updated book: "+book.getTitle());
+                RemoteBookServiceImpl.notifyAllObservers();
                 ((ManageBooksActivity)context).readRecords();
                 countRecords();
 
@@ -290,6 +271,7 @@ public class ManageBooksActivity extends AppCompatActivity {
             public void onResponse(Call<Book> call, Response<Book> response) {
                 Log.d("HomeActivity", "Deleted book: "+title);
                 Toast.makeText(context, "Book record was deleted.", Toast.LENGTH_SHORT).show();
+                RemoteBookServiceImpl.notifyAllObservers();
                 ((ManageBooksActivity)context).readRecords();
                 countRecords();
             }
@@ -300,5 +282,18 @@ public class ManageBooksActivity extends AppCompatActivity {
                 Toast.makeText(context, "Unable to delete book.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void update() {
+        Log.d(TAG, "Updating observer.. ");
+
+        NotificationCompat.Builder mBuilder= new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.book)
+                .setContentTitle("Books Sharing App")
+                .setContentText("The list of books has changed.");
+        int mNotificationId=001;
+        NotificationManager mNotifyMan=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mNotifyMan.notify(mNotificationId,mBuilder.build());
     }
 }

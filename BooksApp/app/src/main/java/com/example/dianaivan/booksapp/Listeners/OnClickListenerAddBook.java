@@ -71,20 +71,7 @@ public class OnClickListenerAddBook implements View.OnClickListener{
 
                         final Book b=new Book(bookTitle,bookAuthor,genre,exchangeMethod,location,imageURL,0,0);
 
-                       /* boolean createSuccesful=new TableControllerBook(context).create(b);
-                        if(createSuccesful)
-                        {
-                            Toast.makeText(context,"Book info was saved",Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
-                            Toast.makeText(context,"Unable to save book information",Toast.LENGTH_SHORT).show();
-                        }
-                        ((ManageBooksActivity)context).countRecords();
-                        ((ManageBooksActivity)context).readRecords();*/
-
                         addNewBook(b,context);
-                        //((ManageBooksActivity)context).readRecords();
                         dialog.cancel();
                     }
                         }).show();
@@ -100,6 +87,7 @@ public class OnClickListenerAddBook implements View.OnClickListener{
             public void onResponse(Call<Book> call, Response<Book> response) {
                 Toast.makeText(context,"Book info was saved",Toast.LENGTH_SHORT).show();
                 Log.d("AddBook", "Book added: " + b.getTitle());
+                RemoteBookServiceImpl.notifyAllObservers();
                 ((ManageBooksActivity)context).readRecords();
                 ((ManageBooksActivity)context).countRecords();
             }
