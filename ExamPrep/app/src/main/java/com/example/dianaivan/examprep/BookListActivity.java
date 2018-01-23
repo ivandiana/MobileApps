@@ -1,6 +1,7 @@
 package com.example.dianaivan.examprep;
 
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -84,7 +85,8 @@ public class BookListActivity extends AppCompatActivity implements MyCallback{
 
     public void onAddClick(View view)
     {
-
+        Intent intent=new Intent(getApplication(),NewBookActivity.class);
+        startActivityForResult(intent,10000);
     }
 
     public void onRefreshClick(View view)

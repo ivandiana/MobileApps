@@ -1,12 +1,15 @@
 package com.example.dianaivan.examprep.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dianaivan.examprep.R;
 import com.example.dianaivan.examprep.domain.Book;
@@ -58,7 +61,29 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
             {
                 Context context=v.getContext();
                 //TODO: add the detail activity here
-               // Intent intent=new Intent(context,Ev)
+                final CharSequence[] items={"View","Edit","Delete"};
+                new AlertDialog.Builder(context).setTitle("Book Record")
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int item) {
+                                if(item==0)
+                                {
+                                    //view item
+
+                                }
+                                else
+                                {
+                                    if(item==1)
+                                    {
+
+                                    }
+                                    else
+                                    {
+
+                                    }
+                                }
+                            }
+                        }).show();
             }
 
         });

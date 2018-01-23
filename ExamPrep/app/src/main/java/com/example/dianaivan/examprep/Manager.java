@@ -76,4 +76,43 @@ public class Manager {
                     }
                 });
     }
+
+    public void saveBook(final Book book, final MyCallback callback)
+    {
+        service.addBook(book)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Book>() {
+                    @Override
+                    public void onCompleted() {
+
+                        //persist data locally
+                        saveDataLocally(book);
+                        Timber.v("Service completed.");
+                        callback.clear();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e,"Error while persisting a book");
+                        callback.showError("Not able to connect to the server, will not persist!");
+                    }
+
+                    @Override
+                    public void onNext(Book book) {
+                        Timber.v("Book persisted");
+                    }
+                });
+    }
+
+    private void saveDataLocally(final Book book)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                app.db.getBooksDao().addBook(book);
+            }
+        }).start();
+    }
+
 }
