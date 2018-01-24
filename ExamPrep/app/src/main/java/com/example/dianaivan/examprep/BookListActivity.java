@@ -18,6 +18,7 @@ import com.example.dianaivan.examprep.domain.Book;
 
 import java.util.List;
 
+import timber.log.Timber;
 
 
 public class BookListActivity extends AppCompatActivity implements MyCallback{
@@ -48,6 +49,11 @@ public class BookListActivity extends AppCompatActivity implements MyCallback{
 
     }
 
+    @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            Timber.d("Back in main activity");
+          }
     private boolean loadEvents()
     {
         boolean connectivity=manager.networkConnectivity(getApplicationContext());

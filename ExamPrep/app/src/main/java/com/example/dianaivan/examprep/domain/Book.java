@@ -47,6 +47,12 @@ public class Book {
         this.date=date;
 
     }
+    public Book()
+    {
+        this.id=1;
+        this.title="";
+        this.date=new Date();
+    }
 
 
 }

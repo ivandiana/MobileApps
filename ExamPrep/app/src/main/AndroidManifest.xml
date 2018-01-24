@@ -22,7 +22,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewBookActivity" />
-        <activity android:name=".DetailsActivity"></activity>
+        <activity android:name=".DetailsActivity" />
+        <activity android:name=".EditActivity"></activity>
     </application>
 
 </manifest>

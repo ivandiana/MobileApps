@@ -11,11 +11,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dianaivan.examprep.DetailsActivity;
+import com.example.dianaivan.examprep.EditActivity;
+import com.example.dianaivan.examprep.Manager;
 import com.example.dianaivan.examprep.R;
 import com.example.dianaivan.examprep.domain.Book;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by Diana Ivan on 1/22/2018.
@@ -50,18 +55,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem=mValues.get(position);
         holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
         holder.mContentView.setText(mValues.get(position).getTitle());
 
         holder.mViews.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v)
+            public void onClick(final View v)
             {
                 Context context=v.getContext();
                 //TODO: add the detail activity here
-                final CharSequence[] items={"View","Edit","Delete"};
+                final CharSequence[] items={"View","Edit"};
                 new AlertDialog.Builder(context).setTitle("Book Record")
                         .setItems(items, new DialogInterface.OnClickListener() {
                             @Override
@@ -69,18 +74,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
                                 if(item==0)
                                 {
                                     //view item
+                                    Context context = v.getContext();
+                                    Intent intent=new Intent(context, DetailsActivity.class);
+                                    intent.putExtra("bookId",mValues.get(position).getId());
+                                    context.startActivity(intent);
 
                                 }
                                 else
                                 {
                                     if(item==1)
                                     {
-
+                                        //view item
+                                        Timber.v("Creating Edit intent..");
+                                        Context context = v.getContext();
+                                        Intent intent=new Intent(context, EditActivity.class);
+                                        intent.putExtra("bookId",mValues.get(position).getId());
+                                        context.startActivity(intent);
                                     }
-                                    else
-                                    {
 
-                                    }
                                 }
                             }
                         }).show();

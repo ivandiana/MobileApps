@@ -24,6 +24,7 @@ import timber.log.Timber;
  */
 
 public class Manager {
+    Book b=new Book();
     private BookApp app;
     private BookService service;
 
@@ -75,6 +76,77 @@ public class Manager {
                         Timber.v("Books locally persisted");
                     }
                 });
+    }
+
+    public void updateBook(Book book, MyCallback callback)
+    {
+        //on complete
+        Timber.v("Service completed updating the book.");
+        //update it locally
+        updateBookLocally(book);
+        callback.clear();
+    }
+
+    private void updateBookLocally(final Book b)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                app.db.getBooksDao().updateBook(b);
+            }
+        }).start();
+    }
+
+    public void deleteBook(Book book, MyCallback callback)
+    {
+        //on complete
+        Timber.v("Service completed removing the book.");
+        //remove it locally
+        locallyDeleteBook(book);
+        callback.clear();
+    }
+
+    private void locallyDeleteBook(final Book book)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                app.db.getBooksDao().deleteBook(book);
+            }
+        }).start();
+    }
+
+    public Book getBookById(int id, MyCallback callback)
+    {
+        Book b=getBookFromLocalStorage(id);
+        if(b==null)
+        {
+            Timber.e("Error while retrieving a book");
+            callback.showError("Not able to connect to retrieve book!");
+        }
+        Timber.v("Service completed: retrieved book.");
+        return b;
+    }
+    private Book getBookFromLocalStorage(final int id)
+    {
+        //gets the book from local db
+        //return app.db.getBooksDao().getBookById(id);
+
+        Thread t=new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                b=app.db.getBooksDao().getBookById(id);
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return b;
+
     }
 
     public void saveBook(final Book book, final MyCallback callback)

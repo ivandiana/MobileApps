@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:title="Title" />
 
-    <TextView
+    <EditText
         android:id="@+id/bookTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="delete"
-        android:text="Delete Book" />
+        android:onClick="update"
+        android:text="Update Book" />
 
 </LinearLayout>
